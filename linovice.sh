@@ -1,10 +1,23 @@
 #!/bin/bash
 
-echo -e "\n\nLinovice is a command line tool that used to help people who are new to linux exploring and learning linux system without difficulties\n\n"
+echo -e "
+
+
+
+	 /|	    _    _ _     /|    _ _ _ _   _ _      /|   _    _ _ _ _ _  _ _ _ _ _
+	/ |        |_/  |   \   | |   /	_ _ _ \  \  \    / |  |_/  /  _ _ _ /  | _ _ _ /
+	| |         /|  | |\ \  | |  | /     \ |  \  \   | |   /|  | |         | |_ _ _
+	| |        | |  | | \ \ | |  | |     | |   \  \  / |  | |  | |         |  _ _ _|
+	| |_ _ _   | |  | |  \ \| |  | \_ _ _/ |    \  \/ /   | |  | \_ _ _    | |_ _ _
+	|_ _ _ _\  |_|  |/    \_ _|   \_ _ _ _/      \_ _/    |_|   \_ _ _ _\  |_ _ _ _\ \
+
+														"
+
+echo -e "\n\n\e[1;32mLinovice\e[0m is a project aimed at creating a command-line–based tool that\nmakes Linux less intimidating for new users while preserving the classic terminal vibe\n"
 
 master(){
 while true; do
-    echo -e "\n\nChoose what you want to do:\n---------------------------\n1.Install package\n2.Update system\n3.Disk usage\n4.Auto-configure network file\n5.Search files and folders\n6.Find My Ip\n7.Process Manager\n8.System cleanup\ne.Press 'e' then Enter to exit\n---------------------------"
+    echo -e "\n\n Choose what you want to do:\n-----------------------------------------\n| 1.Install package			|\n| 2.Update system			|\n| 3.Disk usage				|\n| 4.Auto-configure network file 	|\n| 5.Search files and folders		|\n| 6.Find My Ip				|\n| 7.Process Manager			|\n| 8.System cleanup			|\n| e.Press 'e' then Enter to exit	|\n-----------------------------------------"
     echo -e ""
     read -p "Enter your choice: " option
 
