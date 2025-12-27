@@ -13,11 +13,11 @@ echo -e "
 
 														"
 
-echo -e "\n\n\e[1;32mLinovice\e[0m is a project aimed at creating a command-line–based tool that\nmakes Linux less intimidating for new users while preserving the classic terminal vibe\n"
+echo -e "\n\n \e[1;32mLinovice\e[0m is a project aimed at creating a command-line–based tool that\n makes Linux less intimidating for new users while preserving the classic terminal vibe\n"
 
 master(){
 while true; do
-    echo -e "\n\n Choose what you want to do:\n-----------------------------------------\n| 1.Install package			|\n| 2.Update system			|\n| 3.Disk usage				|\n| 4.Auto-configure network file 	|\n| 5.Search files and folders		|\n| 6.Find My Ip				|\n| 7.Process Manager			|\n| 8.System cleanup			|\n| e.Press 'e' then Enter to exit	|\n-----------------------------------------"
+    echo -e "\n\n Choose what you want to do:\n-----------------------------------------\n| 1.Install package			|\n| 2.Update system			|\n| 3.Disk usage				|\n| 4.Auto-configure network file 	|\n| 5.Search files and folders		|\n| 6.Find My Ip				|\n| 7.Process Manager			|\n| 8.System cleanup			|\n| e.Press 'e' then Enter to exit	|\n| 9.file differentiator			|\n-----------------------------------------"
     echo -e ""
     read -p "Enter your choice: " option
 
@@ -40,6 +40,8 @@ while true; do
 		7)processmanager
 		;;
 		8)cleanup
+		;;
+		9)filediff
 		;;
 		e)echo -e "Closing ..."
 			sleep 1
@@ -315,6 +317,39 @@ elif (( $(echo "$cpu_usage == $memory_usage" | bc -l) )); then
 
 else
     	errorhandler
+fi
+
+}
+
+filediff(){
+echo -e -n "\nEnter first file path/name: "
+IFS= read -r file1
+
+echo -e -n "\nEnter second file path/name: "
+IFS= read -r file2
+
+file1=$(eval echo "$file1")
+file2=$(eval echo "$file2")
+
+echo -e "\nChanges made from $file1 into file $file2:\n"
+sleep 2
+diff -u --color=always "$file1" "$file2" | nl -ba
+echo -e "\n-> Lines removed are in red, lines added are in green\n"
+echo -e -n "\nDo you want to see side by side difference? [ choose 'y' for yes or 'n' for No ]: "
+read -r option
+
+if [ "$option" = "y" ] || [ "$option" = "Y" ]; then
+        echo -e "\nSide-by-side difference of $file1 Vs $file2:" 
+        echo -e "--------------------------------------------------"
+        sleep 1
+        sdiff "$file1" "$file2"
+        echo -e "\n"
+elif [ "$option" = "n" ] || [ "$option" = "N" ];then
+        echo -e "\nTerminating..\n"
+        sleep 2
+else
+        echo -e "\ninvalid option! "
+	filediff
 fi
 
 }
