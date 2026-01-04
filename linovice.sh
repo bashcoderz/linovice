@@ -11,13 +11,14 @@ echo -e "
 	| |_ _ _   | |  | |  \ \| |  | \_ _ _/ |    \  \/ /   | |  | \_ _ _    | |_ _ _
 	|_ _ _ _\  |_|  |/    \_ _|   \_ _ _ _/      \_ _/    |_|   \_ _ _ _\  |_ _ _ _\ \
 
-														"
+
+									 	version 1.2				"
 
 echo -e "\n\n \e[1;32mLinovice\e[0m is a project aimed at creating a command-line–based tool that\n makes Linux less intimidating for new users while preserving the classic terminal vibe\n"
 
 master(){
 while true; do
-    echo -e "\n\n Choose what you want to do:\n-----------------------------------------\n| 1.Install package			|\n| 2.Update system			|\n| 3.Disk usage				|\n| 4.Auto-configure network file 	|\n| 5.Search files and folders		|\n| 6.Find My Ip				|\n| 7.Process Manager			|\n| 8.System cleanup			|\n| e.Press 'e' then Enter to exit	|\n| 9.file differentiator			|\n-----------------------------------------"
+    echo -e "\n\n Choose what you want to do:\n-----------------------------------------\n| 1.Install package			|\n| 2.Update system			|\n| 3.Disk usage				|\n| 4.Auto-configure network file 	|\n| 5.Search files and folders		|\n| 6.Find My Ip				|\n| 7.Process Manager			|\n| 8.System cleanup			|\n| 9.file differentiator			|\n| e.Press 'e' then Enter to exit	|\n-----------------------------------------"
     echo -e ""
     read -p "Enter your choice: " option
 
@@ -248,6 +249,7 @@ echo -e "Search completed!"
 
 myip(){
 	echo -e "\nYour network infomation:\n------------------------"
+	sleep 3
 	#interface=$(ip -o link show |grep "BROADCAST"|awk -F': ' '{print $2}')
 	interface=$(ip -o route get 1.1.1.1 | awk '{print $5}')
 	ip=$(ip -o route get 1.1.1.1 | awk '/via/ {print $3}')
@@ -257,7 +259,7 @@ myip(){
 	echo "The device ip address is: "$ip
 	echo "The device MAC address is: "$macadd
 	echo "The device default gateway is: "$gateway 
-	sleep 5
+	sleep 3
 }
 
 processmanager(){
@@ -334,6 +336,13 @@ file2=$(eval echo "$file2")
 echo -e "\nChanges made from $file1 into file $file2:\n"
 sleep 2
 diff -u --color=always "$file1" "$file2" | nl -ba
+err=$(diff -u --color=always "$file1" "$file2" 2>&1 >/dev/null)
+
+if echo "$err" | grep -q "No such file or directory"; then
+    errorhandler
+    master
+fi
+
 echo -e "\n-> Lines removed are in red, lines added are in green\n"
 echo -e -n "\nDo you want to see side by side difference? [ choose 'y' for yes or 'n' for No ]: "
 read -r option
