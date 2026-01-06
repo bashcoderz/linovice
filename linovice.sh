@@ -12,7 +12,7 @@ echo -e "
 	|_ _ _ _\  |_|  |/    \_ _|   \_ _ _ _/      \_ _/    |_|   \_ _ _ _\  |_ _ _ _\ \
 
 
-									 	version 1.2				"
+									 	version 1.3				"
 
 echo -e "\n\n \e[1;32mLinovice\e[0m is a project aimed at creating a command-line–based tool that\n makes Linux less intimidating for new users while preserving the classic terminal vibe\n"
 
