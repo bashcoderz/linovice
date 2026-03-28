@@ -15,7 +15,7 @@ echo -e "
 									 	version 2.0				"
 
 echo -e "\n\n \e[1;32mLinovice\e[0m is a project aimed at creating a command-line–based tool that\n makes Linux less intimidating for new users while preserving the classic terminal vibe\n"
-
+sleep 2
 master(){
 while true; do
     echo -e "\n\n Choose what you want to do:\n-----------------------------------------\n| 1.Install package			|\n| 2.Update system			|\n| 3.Disk usage				|\n| 4.Auto-configure network file 	|\n| 5.Search files and folders		|\n| 6.Find My Ip				|\n| 7.Process Manager			|\n| 8.System cleanup			|\n| 9.file differentiator			|\n| 10.Add users and Administrator	|\n| c.Clear Terminal			|\n| e.Press 'e' then Enter to exit	|\n-----------------------------------------"
@@ -419,161 +419,210 @@ esac
 
 }
 
-adduser() {
-    echo -e -n "\nChoose user to add:\n 1.Normal user\n 2.Administrator\n\nWhat type of user you want to add: "
-    read option
-    sleep 1
-    
-    if [ "$option" = "1" ]; then
-        echo -e -n "\nHow many users you want to add\n 1.Single user\n 2.Multiple users\n\n Enter your choice: "
-        read choice
 
-        if [ "$choice" = "1" ]; then
-            echo -e -n "Enter user name: "
-            read user
-            sudo adduser $user
-            echo -e "\nLoading user information...\n"
-            sleep 2
-            getent passwd | grep "$user"
-            sleep 1
-        elif [ "$choice" = "2" ]; then
-            echo -e "\nEnter the usernames you want to add, separated by spaces:"
-            read -a user_array
+adduser(){
+	echo -e -n "\nChoose user to add:\n 1.Normal user\n 2.Administrator\n\nWhat type of user you want to add: "
+	read option
+	sleep 1
+		if [ "$option" = "1" ]; then
 
-            if [ ${#user_array[@]} -eq 0 ]; then
-                echo -e "\nNo names entered. Exiting."
-                exit 1
-            fi
+			normaluser
 
-            for user in "${user_array[@]}"; do
-                echo "-------------------------------"
-                if id "$user" &>/dev/null; then
-                    echo -e "\nSkipping: User '$user' already exists."
-                else
-                    echo -e "\nProcessing: $user"
-                    sudo adduser --disabled-password --gecos "" "$user"
-                    echo -e -n "\nEnter password for user $user: "
-                    read password
-                    echo "$user:$password" | sudo chpasswd
-                    echo -e "\nSuccess: User '$user' created."
-                fi
-            done
+		elif [ "$option" = "2" ]; then
 
-            echo "-------------------------------"
-            echo "Done!"
-        fi
+			administrator
+		else
+			echo -e "\nOption not found"
 
-    elif [ "$option" = "2" ]; then
-        echo -e -n "\nHow many Administrators you want to add\n 1.Single Admin\n 2.Multiple Admins\n 3.Existing user as Admin\n\n NB:Make sure the user you want to make Admin already exist \n\n Enter your choice: "
-        read choice
-
-        if [ "$choice" = "1" ]; then
-	    echo -e "\nExisting users:"
-	    echo -e "---------------"
-            getent passwd | awk -F: '$3 >= 1000'
-            echo ""
-            sleep 1
-            echo -e -n "\nEnter user name: "
-            read user
-            sudo adduser $user
-            echo -e "\nLoading user information...\n"
-            sleep 2
-            getent passwd | grep "$user"
-            sleep 1
-            echo -e "\nAdding user $user as an Administrator or root user...\n"
-            sleep 2
-            sudo usermod -aG sudo $user
-            echo -e "\nLoading Admin $user information...\n"
-            sleep 2
-            id $user
-            sleep 1
-            echo ""
-
-        elif [ "$choice" = "2" ]; then
-	    echo -e "\nExisting users:"
-	    echo -e "---------------"
-            getent passwd | awk -F: '$3 >= 1000'
-            echo ""
-            sleep 1
-            echo -e "\nEnter the usernames you want to add, separated by spaces:"
-            read -a user_array
-
-            if [ ${#user_array[@]} -eq 0 ]; then
-                echo -e "\nNo names entered. Exiting."
-                exit 1
-            fi
-
-            for user in "${user_array[@]}"; do
-                echo "-------------------------------"
-                if id "$user" &>/dev/null; then
-                    echo -e "\nSkipping: User '$user' already exists."
-                else
-                    echo -e "\nProcessing: $user"
-                    sudo adduser --disabled-password --gecos "" "$user"
-                    echo -e -n "\nEnter password for user $user: "
-                    read password
-                    echo "$user:$password" | sudo chpasswd
-                    echo -e "\nSuccess: User '$user' created."
-                    echo -e "\nAdding user $user as an Administrator...\n"
-                    sudo usermod -aG sudo $user
-                    echo -e "\nUser '$user' added to sudo group."
-                fi
-            done
-
-            echo "-------------------------------"
-            echo "Done!"
-
-        elif [ "$choice" = "3" ]; then
-            echo -e -n "\nHow many Existing users you want to add as Admin\n 1.Single existing user as Admin\n 2.Multiple existing users as Admins\n\n Enter your choice: "
-            read choice
-            echo -e "\nExisting users:"
-	    echo -e "---------------" 
-	    getent passwd | awk -F: '$3 >= 1000'
-            echo ""
-            sleep 1
-
-            if [ "$choice" = "1" ]; then
-                echo -e -n "\nEnter the username you want to add as Admin: "
-                read user
-                if id "$user" &>/dev/null; then
-                    sudo usermod -aG sudo $user
-                    echo -e "\nAdding user $user as an Administrator or root user...\n"
-                    sleep 2
-                    echo -e "\nLoading Admin $user information...\n"
-                    sleep 2
-                    id $user
-                    sleep 1
-                    echo ""
-                else
-                    echo -e "\nError: User '$user' does not exist."
-                fi
-
-            elif [ "$choice" = "2" ]; then
-                echo -e "\nEnter the usernames you want to add as Admins, separated by spaces:"
-                read -a user_array
-
-                if [ ${#user_array[@]} -eq 0 ]; then
-                    echo -e "\nNo names entered. Exiting."
-                    exit 1
-                fi
-
-                for user in "${user_array[@]}"; do
-                    echo "-------------------------------"
-                    if id "$user" &>/dev/null; then
-                        echo -e "\nProcessing: Adding '$user' to sudo group..."
-                        sudo usermod -aG sudo $user
-                        echo -e "\nSuccess: User '$user' added as Admin."
-                    else
-                        echo -e "\nError: User '$user' does not exist. Skipping."
-                    fi
-                done
-
-                echo "-------------------------------"
-                echo "Done!"
-            fi
-        fi
-    fi
+		fi
 }
+
+
+normaluser(){
+	echo -e -n "\nHow many users you want to add\n 1.Single user\n 2.Multiple users\n\n Enter your choice: "
+		read choice
+
+		if [ "$choice" = "1" ]; then
+			echo -e -n "Enter user name: "
+			read user
+			if id "$user" &>/dev/null; then
+                                        echo -e "\nSkipping: User '$user' already exists."
+                        else
+				sudo adduser $user
+				echo -e "\nLoading user information...\n"
+				sleep 2
+				getent passwd | grep "$user"
+				sleep 1
+			fi
+		elif [ "$choice" = "2" ]; then
+			echo -e "\nEnter the usernames you want to add, separated by spaces:"
+			read -a user_array
+
+			if [ ${#user_array[@]} -eq 0 ]; then
+				echo -e "\nNo names entered. Exiting."
+    				exit 1
+			fi
+
+			for user in "${user_array[@]}"; do
+				echo "-------------------------------"
+				if id "$user" &>/dev/null; then
+					echo -e "\nSkipping: User '$user' already exists."
+    				else
+					echo -e "\nProcessing: $user"
+					sudo adduser --disabled-password --gecos "" "$user"
+					echo -e -n "\nEnter password for user $user: "
+					read password
+					echo "$user:$password" | sudo chpasswd
+					echo -e "\nSuccess: User '$user' created."
+    				fi
+			done
+
+				echo "-------------------------------"
+				echo "Done!"
+		else
+			echo -e "\nOption not found"
+
+		fi
+
+}
+
+
+administrator(){
+	echo -e -n "\nHow many Administrators you want to add\n 1.Single Admin\n 2.Multiple Admins\n 3.Existing user as Admin\n\n Enter your choice: "
+	read choice
+	if [ "$choice" = "1" ]; then
+		echo -e -n "\nEnter user name: "
+		read user
+		if id "$user" &>/dev/null; then
+			echo -e "\nSkipping: User '$user' already exists."
+		else
+	               	sudo adduser $user
+        	        echo -e "\nLoading user information...\n"
+              		sleep 2
+	                getent passwd | grep "$user"
+			sleep 1
+			echo -e "\nAdding user $user as an Administrator or root user...\n"
+			sleep 2
+			#sudo echo "$user ALL=(ALL:ALL) ALL " >> /etc/sudoers
+			sudo usermod -aG sudo $user
+			echo -e "\nLoading Admin $user information...\n"
+			sleep 2
+			id $user
+			sleep 1
+			echo ""
+		fi
+	elif [ "$choice" = "2" ]; then
+		echo -e "\nEnter the usernames you want to add, separated by spaces:"
+		read -a user_array
+		if [ ${#user_array[@]} -eq 0 ]; then
+    			echo -e "\nNo names entered. Exiting."
+    			exit 1
+		fi
+
+		for user in "${user_array[@]}"; do
+		echo "-------------------------------"
+			if id "$user" &>/dev/null; then
+				echo -e "\nSkipping: User '$user' already exists."
+    			else
+				echo -e "\nProcessing: $user"
+				sudo adduser --disabled-password --gecos "" "$user"
+				echo -e -n "\nEnter password for user $user: "
+				read password
+				echo "$user:$password" | sudo chpasswd
+				echo -e "\nSuccess: User '$user' created.\n"
+				sudo usermod -aG sudo $user
+				echo -e "\nAdding user $user as an Administrator or root user...\n"
+				sleep 2
+				echo -e "\nLoading Admin $user information...\n"
+				sleep 2
+				id $user
+				sleep 1
+				echo ""
+    			fi
+		done
+	elif [ "$choice" = "3" ]; then
+	echo -e -n "\nHow many Existing users you want to add as Admin\n 1.Single existing user as Admin\n 2.Multiple existing users as Admins\n\n Enter your choice: "
+		read choice
+		echo -e "Existng users\n"
+		getent passwd | awk -F: '$3 >= 1000'
+		echo ""
+		sleep 1
+		if [ "$choice" = "1" ]; then
+			echo -e -n "\nEnter the username you want to add as Admin: "
+			read user
+				until id "$user" &>/dev/null; do
+					echo -e "\nUser $user  does not exist\n"
+					sleep 2
+                                        echo -e -n "Do you want to add a new user(s)\nChoose 'y' or 'Y' for YES And 'n' or 'N' for NO: "
+                                        read choice 
+                                        if [ "$choice" = "y" ] || [ "$choice" = "Y" ]; then
+                                        	normaluser
+                                        elif [ "$choice" = "n" ] || [ "$choice" = "N" ]; then
+                                        	master
+                                        else 
+                                        	echo -e "\nOption not found"
+                                        fi
+				done
+
+			sudo usermod -aG sudo $user
+			echo -e "\nAdding user $user as an Administrator or root user...\n"
+			sleep 2
+			echo -e "\nLoading Admin $user information...\n"
+			sleep 2
+			id $user
+			sleep 1
+			echo ""
+
+		elif [ "$choice" = "2" ]; then
+			echo -e "\nEnter the usernames you want to add as Admins , separated by spaces:"
+			read -a user_array
+
+			if [ ${#user_array[@]} -eq 0 ]; then
+    			echo -e "\nNo names entered. Exiting."
+    			exit 1
+			fi
+
+			for user in "${user_array[@]}"; do
+			echo "-------------------------------"
+					until id "$user" &>/dev/null; do
+						echo -e "\nUser $user  does not exist\n"
+						sleep 2
+						echo -e -n "Do you want to add a new user(s)\nChoose 'y' or 'Y' for YES And 'n' or 'N' for NO: "
+						read choice 
+							if [ "$choice" = "y" ] || [ "$choice" = "Y" ]; then
+								normaluser
+							elif [ "$choice" = "n" ] || [ "$choice" = "N" ]; then
+								master
+							else 
+								echo -e "\nOption not found"
+							fi
+					done
+
+					sudo usermod -aG sudo $user
+					echo -e "\nAdding user $user as an Administrator or root user...\n"
+					sleep 2
+					echo -e "\nLoading Admin $user information...\n"
+					sleep 2
+					id $user
+					sleep 1
+					echo ""
+
+			done
+
+			echo "-------------------------------"
+			echo "Done!"
+		else
+			echo -e "\nOption not found"
+
+		fi
+
+	else
+	echo -e "\nOption not found"
+
+	fi
+
+}
+
 
 master
 
